@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fractions Recognition Game</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #fffbe6;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #333;
+            padding: 20px;
+            background-color: #ffd27f;
+            margin: 0;
+            font-size: 36px;
+        }
+
+        .container {
+            width: 90%;
+            margin: 0 auto;
+            padding-top: 20px;
+        }
+
+        #start-button {
+            padding: 20px 40px;
+            font-size: 24px;
+            margin: 20px;
+            cursor: pointer;
+            background-color: #84b6f4;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 2px 2px 5px #999;
+            transition: background-color 0.3s;
+        }
+
+        #start-button:hover {
+            background-color: #5da9f6;
+        }
+
+        #question-container {
+            display: none;
+            margin-top: 30px;
+        }
+
+        #question-number {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        #question {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .option-button {
+            display: block;
+            padding: 15px 30px;
+            font-size: 24px;
+            margin: 10px auto;
+            cursor: pointer;
+            background-color: #ffb347;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            width: 300px;
+            transition: background-color 0.3s;
+        }
+
+        .option-button:hover {
+            background-color: #ff9a00;
+        }
+
+        #feedback {
+            font-size: 28px;
+            margin-top: 20px;
+            min-height: 40px;
+        }
+
+        #next-button {
+            padding: 15px 30px;
+            font-size: 24px;
+            margin-top: 20px;
+            cursor: pointer;
+            background-color: #77dd77;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            display: none;
+            transition: background-color 0.3s;
+        }
+
+        #next-button:hover {
+            background-color: #5ecb5e;
+        }
+
+        #score {
+            font-size: 28px;
+            margin-top: 30px;
+            color: #333;
+        }
+
+        #final-score {
+            font-size: 36px;
+            margin-top: 30px;
+            color: #333;
+        }
+
+        #restart-button {
+            padding: 20px 40px;
+            font-size: 24px;
+            margin: 20px;
+            cursor: pointer;
+            background-color: #ffcc5c;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            transition: background-color 0.3s;
+            display: none;
+        }
+
+        #restart-button:hover {
+            background-color: #ffb84d;
+        }
+
+        /* Shape styles */
+        .shape {
+            margin: 20px auto;
+        }
+
+        .circle, .rectangle {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+        .circle {
+            border-radius: 50%;
+            background-color: #ddd;
+        }
+
+        .rectangle {
+            background-color: #ddd;
+        }
+
+        .shaded {
+            background-color: #84b6f4;
+        }
+
+        /* Fraction representation styles */
+        .fraction {
+            display: inline-block;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .fraction .top {
+            border-bottom: 1px solid #000;
+            padding: 0 5px;
+        }
+
+        .fraction .bottom {
+            padding: 0 5px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Fractions Recognition Game</h1>
+
+    <div class="container">
+        <button id="start-button" onclick="startGame()">Start Game</button>
+
+        <div id="question-container">
+            <div id="question-number"></div>
+            <div id="question"></div>
+            <div id="shape-container"></div>
+            <button class="option-button" id="option1" onclick="checkAnswer(0)"></button>
+            <button class="option-button" id="option2" onclick="checkAnswer(1)"></button>
+            <button class="option-button" id="option3" onclick="checkAnswer(2)"></button>
+            <button class="option-button" id="option4" onclick="checkAnswer(3)"></button>
+            <div id="feedback"></div>
+            <button id="next-button" onclick="nextQuestion()">Next Question</button>
+            <div id="score"></div>
+        </div>
+
+        <div id="final-score"></div>
+        <button id="restart-button" onclick="restartGame()">Play Again</button>
+    </div>
+
+    <script>
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function startGame() {
+            document.getElementById('start-button').style.display = 'none';
+            document.getElementById('question-container').style.display = 'block';
+            generateQuestions();
+            showQuestion();
+        }
+
+        function generateQuestions() {
+            questions = [
+    // Shape-based questions
+    // Question 1
+    {
+        type: 'shape',
+        question: 'What fraction of the shape is shaded?',
+        fraction: '1/2',
+        options: ['1/2', '1/3', '1/4', '3/4']
+    },
+    // Question 2
+    {
+        type: 'shape',
+        question: 'What fraction of the shape is shaded?',
+        fraction: '1/3',
+        options: ['1/2', '1/3', '1/4', '3/4']
+    },
+    // Question 3
+    {
+        type: 'shape',
+        question: 'What fraction of the shape is shaded?',
+        fraction: '1/4',
+        options: ['1/2', '1/3', '1/4', '3/4']
+    },
+    // Question 4
+    {
+        type: 'shape',
+        question: 'What fraction of the shape is shaded?',
+        fraction: '3/4',
+        options: ['1/2', '1/3', '1/4', '3/4']
+    },
+    // Fill in the blanks
+    // Question 5
+    {
+        type: 'text',
+        question: 'Fill in the blank: A whole is equal to ___ thirds.',
+        answer: '3',
+        options: ['2', '3', '4', '1']
+    },
+    // Question 6
+    {
+        type: 'text',
+        question: 'Fill in the blank: One-third is written as:',
+        answer: '1/3',
+        options: ['1/2', '1/3', '1/4', '3/4']
+    },
+    // Question 7
+    {
+        type: 'text',
+        question: 'Fill in the blank: Two halves make ___ whole(s).',
+        answer: '1',
+        options: ['1', '2', '3', '4']
+    },
+    // True or False
+    // Question 8
+    {
+        type: 'text',
+        question: 'True or False: Two halves make one whole.',
+        answer: 'True',
+        options: ['True', 'False']
+    },
+    // Question 9
+    {
+        type: 'text',
+        question: 'True or False: One-third is larger than one-half.',
+        answer: 'False',
+        options: ['True', 'False']
+    },
+    // Word problems with context
+    // Question 10
+    {
+        type: 'text',
+        question: 'A pizza is divided into 3 equal slices. Each slice is what fraction of the pizza?',
+        answer: '1/3',
+        options: ['1/2', '1/3', '1/4', '3/4']
+    },
+    // Question 11
+    {
+        type: 'text',
+        question: 'A pie is cut into 4 equal pieces. If Sarah eats 3 pieces, what fraction of the pie did she eat?',
+        answer: '3/4',
+        options: ['1/2', '1/3', '1/4', '3/4']
+    },
+    // Question 12
+    {
+        type: 'text',
+        question: 'A chocolate bar is divided into 4 equal parts. If you eat 1 part, what fraction of the chocolate bar is left?',
+        answer: '3/4',
+        options: ['1/2', '1/3', '1/4', '3/4']
+    },
+    // Question 13
+    {
+        type: 'text',
+        question: 'In a garden, 1 out of 4 flowers is red. What fraction of the flowers are red?',
+        answer: '1/4',
+        options: ['1/2', '1/3', '1/4', '3/4']
+    },
+    // Matching numerators and denominators
+    // Question 14
+    {
+        type: 'text',
+        question: 'In the fraction 2/3, the numerator is ___.',
+        answer: '2',
+        options: ['2', '3', '1', '4']
+    },
+    // Question 15
+    {
+        type: 'text',
+        question: 'In the fraction 3/4, the denominator is ___.',
+        answer: '4',
+        options: ['2', '3', '4', '1']
+    },
+    // Additional word problems with context
+    // Question 16
+    {
+        type: 'text',
+        question: 'A pizza is divided into 4 equal parts: 1 part is pepperoni, 2 parts are cheese, and 1 part is vegetarian. What fraction of the pizza is cheese?',
+        answer: '1/2',
+        options: ['1/4', '1/2', '3/4', '1/3']
+    },
+    // Question 17
+    {
+        type: 'text',
+        question: 'A cake is divided into 3 equal parts: 1 part is chocolate, and 2 parts are vanilla. What fraction of the cake is chocolate?',
+        answer: '1/3',
+        options: ['1/2', '1/3', '2/3', '3/4']
+    },
+    // Question 18
+    {
+        type: 'text',
+        question: 'If you eat 2 slices out of 4 equal slices of a pie, what fraction of the pie have you eaten?',
+        answer: '1/2',
+        options: ['1/4', '1/2', '3/4', '1/3']
+    },
+    // Question 19
+    {
+        type: 'text',
+        question: 'A sandwich is cut into 2 equal parts. If you eat one part, what fraction of the sandwich did you eat?',
+        answer: '1/2',
+        options: ['1/4', '1/2', '1/3', '3/4']
+    },
+    // More True or False
+    // Question 20
+    {
+        type: 'text',
+        question: 'True or False: One-fourth is less than one-half.',
+        answer: 'True',
+        options: ['True', 'False']
+    },
+    // Question 21
+    {
+        type: 'text',
+        question: 'True or False: In the fraction 3/4, 3 is the denominator.',
+        answer: 'False',
+        options: ['True', 'False']
+    },
+    // Question 22
+    {
+        type: 'text',
+        question: 'True or False: Three-fourths is greater than one-half.',
+        answer: 'True',
+        options: ['True', 'False']
+    },
+    // Fill in the blanks
+    // Question 23
+    {
+        type: 'text',
+        question: 'Fill in the blank: Four quarters make ___ whole(s).',
+        answer: '1',
+        options: ['1', '2', '3', '4']
+    },
+    // Question 24
+    {
+        type: 'text',
+        question: 'Fill in the blank: One-half is written as:',
+        answer: '1/2',
+        options: ['1/2', '1/3', '1/4', '3/4']
+    },
+    // Shape-based questions
+    // Question 25
+    {
+        type: 'shape',
+        question: 'What fraction of the shape is shaded?',
+        fraction: '1/4',
+        options: ['1/2', '1/3', '1/4', '3/4']
+    },
+    // Question 26
+    {
+        type: 'shape',
+        question: 'What fraction of the shape is shaded?',
+        fraction: '3/4',
+        options: ['1/2', '1/3', '1/4', '3/4']
+    },
+    // Additional questions
+    // Question 27
+    {
+        type: 'text',
+        question: 'Fill in the blank: One-fourth is also called one-___.',
+        answer: 'quarter',
+        options: ['quarter', 'third', 'half', 'whole']
+    },
+    // Question 28
+    {
+        type: 'text',
+        question: 'Fill in the blank: Each part of two halves is equal to one-___ of the whole.',
+        answer: 'half',
+        options: ['half', 'third', 'quarter', 'whole']
+    },
+    // Question 29
+    {
+        type: 'text',
+        question: 'True or False: One-third is equal to one-fourth.',
+        answer: 'False',
+        options: ['True', 'False']
+    },
+    // Question 30
+    {
+        type: 'text',
+        question: 'Which is larger: 1/2 or 1/4?',
+        answer: '1/2',
+        options: ['1/2', '1/4', 'They are equal', 'Cannot tell']
+    },
+    // Question 31
+    {
+        type: 'text',
+        question: 'Which is smaller: 1/3 or 1/2?',
+        answer: '1/3',
+        options: ['1/2', '1/3', 'They are equal', 'Cannot tell']
+    },
+    // Question 32
+    {
+        type: 'text',
+        question: 'A rectangle is divided into 4 equal parts. If 1 part is shaded, what fraction is shaded?',
+        answer: '1/4',
+        options: ['1/2', '1/3', '1/4', '3/4']
+    },
+    // Question 33
+    {
+        type: 'text',
+        question: 'A circle is divided into 2 equal parts. If both parts are shaded, what fraction is shaded?',
+        answer: '1',
+        options: ['1/2', '1/3', '1', '3/4']
+    },
+    // Question 34
+    {
+        type: 'text',
+        question: 'A pie is cut into 4 equal pieces. If you eat 1 piece, what fraction of the pie remains?',
+        answer: '3/4',
+        options: ['1/2', '1/3', '1/4', '3/4']
+    },
+    // Question 35
+    {
+        type: 'text',
+        question: 'In the fraction 1/3, the denominator is ___.',
+        answer: '3',
+        options: ['1', '2', '3', '4']
+    },
+    // Question 36
+    {
+        type: 'text',
+        question: 'True or False: One-half is equal to two-fourths.',
+        answer: 'True',
+        options: ['True', 'False']
+    },
+    // Question 37
+    {
+        type: 'text',
+        question: 'A chocolate bar is divided into 4 equal parts. If you eat 2 parts, what fraction of the chocolate bar have you eaten?',
+        answer: '1/2',
+        options: ['1/2', '1/3', '1/4', '3/4']
+    },
+    // Question 38
+    {
+        type: 'text',
+        question: 'Fill in the blank: One whole is equal to ___ fourths.',
+        answer: '4',
+        options: ['1', '2', '3', '4']
+    },
+    // Question 39
+    {
+        type: 'text',
+        question: 'Which is larger: 3/4 or 1/2?',
+        answer: '3/4',
+        options: ['1/2', '3/4', 'They are equal', 'Cannot tell']
+    },
+    // Question 40
+    {
+        type: 'text',
+        question: 'A pizza is divided into 4 equal slices. If you eat 3 slices, what fraction of the pizza is left?',
+        answer: '1/4',
+        options: ['1/2', '1/3', '1/4', '3/4']
+    }
+];
+
+            // Shuffle the questions
+            questions.sort(() => Math.random() - 0.5);
+        }
+
+        function showQuestion() {
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('next-button').style.display = 'none';
+
+            let questionObj = questions[currentQuestionIndex];
+            document.getElementById('question-number').textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+            document.getElementById('question').textContent = questionObj.question;
+            document.getElementById('score').textContent = `Score: ${score}`;
+
+            // Display shape if needed
+            if (questionObj.type === 'shape') {
+                displayShape(questionObj.fraction);
+            } else {
+                document.getElementById('shape-container').innerHTML = '';
+            }
+
+            // Set options
+            let options = [...questionObj.options];
+            options.sort(() => Math.random() - 0.5); // Shuffle options
+            for (let i = 0; i < options.length; i++) {
+                let optionButton = document.getElementById(`option${i + 1}`);
+                optionButton.textContent = options[i];
+                optionButton.style.display = 'block';
+                optionButton.disabled = false;
+            }
+            // Hide unused option buttons
+            for (let i = options.length; i < 4; i++) {
+                document.getElementById(`option${i + 1}`).style.display = 'none';
+            }
+        }
+
+        function displayShape(fraction) {
+            let shapeContainer = document.getElementById('shape-container');
+            shapeContainer.innerHTML = '';
+            let shapeDiv = document.createElement('div');
+            shapeDiv.className = 'rectangle shape';
+
+            let numerator = parseInt(fraction.split('/')[0]);
+            let denominator = parseInt(fraction.split('/')[1]);
+
+            for (let i = 0; i < denominator; i++) {
+                let part = document.createElement('div');
+                part.style.width = '100%';
+                part.style.height = `${100 / denominator}%`;
+                part.style.position = 'absolute';
+                part.style.top = `${(100 / denominator) * i}%`;
+                part.style.left = '0';
+                part.style.border = '1px solid #000';
+                if (i < numerator) {
+                    part.classList.add('shaded');
+                } else {
+                    part.style.backgroundColor = '#ddd';
+                }
+                shapeDiv.appendChild(part);
+            }
+            shapeContainer.appendChild(shapeDiv);
+        }
+
+        function checkAnswer(selectedOptionIndex) {
+            let questionObj = questions[currentQuestionIndex];
+            let selectedOption = document.getElementById(`option${selectedOptionIndex + 1}`).textContent;
+            let correctAnswer = questionObj.type === 'shape' ? questionObj.fraction : questionObj.answer;
+
+            if (selectedOption.toLowerCase() === correctAnswer.toLowerCase()) {
+                document.getElementById('feedback').textContent = 'Correct! 🎉';
+                score += 10;
+            } else {
+                document.getElementById('feedback').textContent = `Incorrect. The correct answer is ${correctAnswer}.`;
+            }
+            document.getElementById('score').textContent = `Score: ${score}`;
+            document.getElementById('next-button').style.display = 'block';
+
+            // Disable option buttons
+            for (let i = 0; i < 4; i++) {
+                let optionButton = document.getElementById(`option${i + 1}`);
+                optionButton.disabled = true;
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            document.getElementById('question-container').style.display = 'none';
+            document.getElementById('final-score').innerHTML = `Game Over!<br>Your final score is ${score} out of ${questions.length * 10}.`;
+            document.getElementById('restart-button').style.display = 'block';
+        }
+
+        function restartGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            document.getElementById('restart-button').style.display = 'none';
+            document.getElementById('final-score').textContent = '';
+            document.getElementById('start-button').style.display = 'block';
+        }
+
+    </script>
+</body>
+</html>
